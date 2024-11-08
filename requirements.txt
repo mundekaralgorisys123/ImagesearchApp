@@ -1,6 +1,6 @@
 numpy
 pillow
-tensorflow
+tensorflow==2.10.0
 flask
 openai==0.28
 python-dotenv
@@ -10,3 +10,7 @@ python-Levenshtein==0.21.0
 python-dotenv
 PyMuPDF
 fuzzywuzzy
+scikit-learn
+pypdf
+opencv-python
+pillow
