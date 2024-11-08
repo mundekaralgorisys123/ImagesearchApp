@@ -1,0 +1,3 @@
+EfficientNetB0
+VGG19
+ResNet50

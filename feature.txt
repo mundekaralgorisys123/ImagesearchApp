@@ -1,0 +1,10 @@
+Dashboard
+Image Search
+Train Similar Image
+Image Generate
+Resume Search
+Resume summary
+Card Extractor
+Image To Sketch
+
+

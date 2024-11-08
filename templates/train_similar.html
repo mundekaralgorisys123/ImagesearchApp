@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Search & Generate</title>
+    <!-- External CSS Files -->
+    <link rel="stylesheet" href="../static/style/styles.css"> <!-- Sidebar CSS -->
+    <link rel="stylesheet" href="../static/style/style_gen.css"> <!-- Main content CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    
+    <!-- SweetAlert2 JS -->
+
+
+    <!-- Bootstrap CSS -->
+    <!-- Custom Embedded CSS -->
+    <style>
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-select,
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+        }
+
+        .form-select {
+            appearance: none;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .form-select,
+            .btn-primary {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+
+        /* Styling for the progress bar */
+        .progress-container {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+            display: none;
+            /* Hidden initially */
+        }
+
+        .progress-bar {
+            height: 20px;
+            width: 0;
+            background-color: #007bff;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            font-size: 14px;
+            transition: width 0.2s ease;
+        }
+        .mb-6-custom {
+            margin-bottom: 6px;
+        }
+    
+        .large-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+    
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px; /* Space between checkbox and label */
+        }
+    
+        .form-label2 {
+            font-size: 16px;
+            color: #555;
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Sidebar -->
+    <div class="navigation">
+        <ul>
+            <li class="header-title">
+                ALGORISYS TECHNOLOGIES
+            </li>
+            {% if 'Dashboard' in features %}
+            <li>
+                <a href="/">
+                    <span class="icon"><i class="fa-solid fa-house"></i></span>
+                    <span class="title">Dashboard</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if 'Image Search' in features %}
+            <li>
+                <a href="/search">
+                    <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="title">Image Search</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if 'Image Generate' in features %}
+            <li>
+                <a href="/generate">
+                    <span class="icon"><i class="fa-solid fa-image"></i></span>
+                    <span class="title">Image Generate</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if 'Resume Search' in features %}
+            <li>
+                <a href="/Research">
+                    <span class="icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="title">Resume Search</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if 'Resume summary' in features %}
+            <li>
+                <a href="/resume">
+                    <span class="icon"><i class="fa-solid fa-file-alt"></i></span>
+                    <span class="title">Resume summary</span>
+                </a>
+            </li>
+            {% endif %}
+            {% if 'Train Similar Image' in features %}
+            <li>
+                <a href="/train_similar">
+                    <span class="icon"><i class="fa-solid fa-robot"></i></span>
+                    <span class="title">Train Similar Model</span>
+                </a>
+            </li>
+            {% endif %}
+            {% if 'Card Extractor' in features %}
+            <li>
+                <a href="/card">
+                    <span class="icon"><i class="fa-solid fa-id-card"></i></span>
+                    <span class="title">Card Extractor</span>
+                </a>
+            </li>
+            {% endif %}
+            {% if 'Image To Sketch' in features %}
+            <li>
+                <a href="/sketch">
+                    <span class="icon"><i class="fa-solid fa-id-card"></i></span>
+                    <span class="title">Image To Sketch</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="toggle" onclick="toggleMenu()"></div>
+    <script type="text/javascript">
+        function toggleMenu() {
+            let navigation = document.querySelector('.navigation');
+            let toggle = document.querySelector('.toggle');
+            navigation.classList.toggle('active');
+            toggle.classList.toggle('active');
+        }
+    </script>
+
+
+    <!-- Main Content Area -->
+    <div class="main-container">
+
+        {% if message1 %}
+        <h1 class="welcome-heading">{{ message1 }}</h1>
+        {% else %}
+        <div class="form-section">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+
+            <div class="container">
+                <h2>Train Similar Image</h2>
+
+                <form id="trainForm">
+                    <label for="folderName" class="form-label">Select Train Similar Image Folder</label>
+                    <select class="form-select" name="folderName" id="folder-name">
+                        <option value="" disabled selected hidden>Select a folder</option>
+                        {% for folder in folder_names %}
+                        <option value="{{ folder }}">{{ folder }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label class="form-label" for="modelName">Select Model:</label>
+                    <select class="form-select" name="modelName" id="model-name">
+                        <option value="" disabled selected>Select Model</option>
+                        <option value="EfficientNetB0">EfficientNetB0</option>
+                        <option value="ResNet50">ResNet50</option>
+                        <option value="VGG19">VGG19</option>
+                    </select>
+                    <div class="mb-6-custom large-checkbox">
+                        <input type="checkbox" class="form-check-input" id="forceRetraining" name="force_retraining" value="true">
+                        <label class="form-check-label form-label2" for="forceRetraining">Force retraining</label>
+                    </div>
+                    <button type="button" onclick="startTraining()" class="btn-primary">Train Model</button>
+                </form>
+            </div>
+
+
+
+        </div>
+        {% endif %}
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="../static/js/jquery-3.3.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Function to start training by sending a POST request with the form data
+        function startTraining() {
+            const formData = new FormData(document.getElementById('trainForm'));
+    
+            // Send a POST request to the /train-model endpoint to start training
+            fetch('/train-model', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Show a Swal modal for progress
+                        Swal.fire({
+                            title: 'Model Training Started..',
+                            html: 'Progress: <b id="progressValue">0</b>%',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                updateProgress();
+                            }
+                        });
+                    } else {
+                        response.json().then(data => {
+                            toastr.error(data.message || 'Failed to start training.');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    toastr.error('Unable to initiate training due to a network error.');
+                });
+        }
+    
+        // Function to update the Swal progress by polling the /training-status endpoint
+        function updateProgress() {
+            // Poll the server to check training status
+            fetch('/training-status')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch training status');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const progress = data.progress || 0;
+                    const status = data.status || 'unknown';
+    
+                    // Update Swal progress percentage
+                    document.getElementById('progressValue').textContent = progress.toFixed(0);
+    
+                    if (status === 'completed') {
+                        // Show success message on completion
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Training Completed',
+                            text: 'Model training completed successfully!',
+                            showConfirmButton: true
+                        }).then(() => {
+                            // Clear the form after successful training completion
+                            document.getElementById('trainForm').reset();
+                            // Optionally, display a custom message indicating the folder
+                            console.log('Training completed on folder: ' + data.folderName); // Or show on the UI
+                        });
+                    } else if (status === 'in-progress') {
+                        setTimeout(updateProgress, 500);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Unexpected training status: ' + status
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network Error',
+                        text: 'Failed to fetch progress due to a network error.'
+                    });
+                });
+        }
+    </script>
+    
+
+
+
+</body>
+
+</html>
